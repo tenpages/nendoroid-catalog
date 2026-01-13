@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="app.title">Nendoroid Catalog</title>
+    <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0%200%2064%2064'><text x='50%' y='50%' font-size='44' text-anchor='middle' dominant-baseline='central' font-family='Noto%20Sans%20JP,Segoe%20UI,Arial,sans-serif' fill='%23ff6600'>%E3%81%AD</text></svg>">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="site-brand">
+                <span class="site-icon" role="img" aria-label="ね">ね</span>
+                <h1 class="site-title" data-i18n="app.title">Nendoroid Catalog</h1>
+            </div>
+            <div class="header-controls">
+                <div class="language-selector">
+                    <select id="language-select" class="language-select"></select>
+                </div>
+                <div class="dx-mode-toggle">
+                    <select id="dx-mode-select" class="dx-mode-select">
+                        <option value="separate" data-i18n="dx.separate">DX Separate</option>
+                        <option value="variant" data-i18n="dx.variant">DX as Variant</option>
+                    </select>
+                </div>
+                <div class="stats-bar">
+                    <span class="stat-item"><span data-i18n="stats.total">Total</span>: <strong id="total-count">0</strong></span>
+                    <span class="stat-item"><span data-i18n="stats.owned">Owned</span>: <strong id="owned-count">0</strong></span>
+                    <span class="stat-item"><span data-i18n="stats.wishlist">Wishlist</span>: <strong id="wishlist-count">0</strong></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <div class="filter-section">
+                <h3 class="filter-title" data-i18n="filter.search">Search</h3>
+                <input type="text" id="search-input" class="search-input" data-i18n-placeholder="filter.search.placeholder" placeholder="Search by name, series, ID...">
+            </div>
+
+            <div class="filter-section">
+                <h3 class="filter-title" data-i18n="filter.fandom">Fandom</h3>
+                <select id="fandom-filter" class="filter-select">
+                    <option value="" data-i18n="filter.fandom.all">All Fandoms</option>
+                </select>
+            </div>
+
+            <!-- <div class="filter-section">
+                <h3 class="filter-title" data-i18n="filter.gender">Gender</h3>
+                <select id="gender-filter" class="filter-select">
+                    <option value="" data-i18n="filter.gender.all">All Genders</option>
+                    <option value="Male" data-i18n="filter.gender.male">Male</option>
+                    <option value="Female" data-i18n="filter.gender.female">Female</option>
+                    <option value="Other" data-i18n="filter.gender.other">Other</option>
+                </select>
+            </div> -->
+
+            <!-- <div class="filter-section">
+                <h3 class="filter-title" data-i18n="filter.hairColor">Hair Color</h3>
+                <div id="hair-color-filters" class="checkbox-group"></div>
+            </div>
+
+            <div class="filter-section">
+                <h3 class="filter-title" data-i18n="filter.clothesColor">Clothes Color</h3>
+                <div id="clothes-color-filters" class="checkbox-group"></div>
+            </div>
+
+            <div class="filter-section">
+                <h3 class="filter-title" data-i18n="filter.parts">Parts</h3>
+                <div id="parts-filters" class="checkbox-group"></div>
+            </div> -->
+
+            <div class="filter-section">
+                <h3 class="filter-title" data-i18n="filter.id">Nendoroid ID</h3>
+                <div style="display:flex; gap:0.5rem; margin-top:0.25rem;">
+                    <input type="number" id="id-min" class="filter-input" data-i18n-placeholder="filter.id.min.placeholder" placeholder="Min ID">
+                    <input type="number" id="id-max" class="filter-input" data-i18n-placeholder="filter.id.max.placeholder" placeholder="Max ID">
+                </div>
+                <button id="clear-filters" class="clear-btn" data-i18n="filter.clear">Clear All Filters</button>
+            </div>
+
+            <div class="filter-section export-section">
+                <h3 class="filter-title" data-i18n="export.title">Export</h3>
+                <button id="export-grid-all" class="clear-btn export-btn" data-i18n="export.grid">Export Grid (All)</button>
+                <button id="export-grid-owned-wishlist" class="clear-btn export-btn" data-i18n="export.ownedWishlist">Export Owned & Wishlist</button>
+                <button id="export-grid-owned" class="clear-btn export-btn" data-i18n="export.owned">Export Owned (Catalog Style)</button>
+            </div>
+        </aside>
+
+        <main class="catalog-main">
+            <div id="catalog-grid" class="catalog-grid"></div>
+            <div id="no-results" class="no-results" style="display: none;">
+                <p data-i18n="noResults">No Nendoroids found matching your criteria.</p>
+            </div>
+        </main>
+    </div>
+
+    <div id="nendoroid-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Export preview modal -->
+    <div id="export-preview-modal" class="modal export-preview-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="export-preview-title">
+        <div class="modal-content">
+            <span class="modal-close export-preview-close" id="export-preview-close">&times;</span>
+            <div class="export-preview-header">
+                <h2 id="export-preview-title" data-i18n="export.preview.title">Export Preview</h2>
+                <div class="export-preview-controls">
+                    <label for="export-scale-select" data-i18n="export.preview.scale">Scale</label>
+                    <select id="export-scale-select" class="export-scale-select" aria-label="Scale">
+                        <option value="100">100%</option>
+                        <option value="75">75%</option>
+                        <option value="50">50%</option>
+                        <option value="fit" data-i18n="export.preview.fit">Fit</option>
+                    </select>
+                    <button id="export-download" class="clear-btn export-btn" data-i18n="export.preview.download">Download</button>
+                </div>
+            </div>
+            <div class="export-preview-body" id="export-preview-body" tabindex="0">
+                <img id="export-preview-img" alt="" draggable="false">
+            </div>
+        </div>
+    </div>
+
+    <script src="js/translations.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
