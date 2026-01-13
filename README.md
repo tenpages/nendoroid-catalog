@@ -2,6 +2,10 @@
 
 An interactive catalog for Nendoroid collectible figures, hosted on GitHub Pages. Features search/filter capabilities, local storage for tracking owned and wishlist items, and DX version support.
 
+## AI Disclamer
+
+Most of the project, including this readme, is completed by AI. ROO Code (minimax-m2.1:free) and GitHub Copilot were used. This is a toy project for me to test AI coding.
+
 ## Features
 
 - 🔍 **Search & Filter**: Search by character name, series, or ID. Filter by fandom, gender, hair color, clothes color, and parts.
